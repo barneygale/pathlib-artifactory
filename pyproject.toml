@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pathlib-artifactory"
+version = "0.1.0"
+authors = [
+  { name="Barney Gale", email="barney.gale@gmail.com" },
+]
+description = "Backport of pathlib ABCs"
+readme = "README.rst"
+license = {file = "LICENSE.txt"}
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers"
+]
+dependencies = [
+    "pathlib-abc==0.3.0",
+    "requests",
+]
+
+[project.urls]
+Homepage = "https://github.com/barneygale/pathlib-artifactory"
+Issues = "https://github.com/barneygale/pathlib-artifactory/issues"
