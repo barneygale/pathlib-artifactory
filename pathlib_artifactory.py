@@ -1,10 +1,11 @@
 import dataclasses
 import errno
+import io
 import posixpath
 import stat
 
 from requests import Session
-from pathlib_abc import PathBase
+from pathlib_abc import PathBase, UnsupportedOperation
 
 
 @dataclasses.dataclass
@@ -47,6 +48,25 @@ class ArtifactoryPath(PathBase):
             return ArtifactoryStat(stat.S_IFREG, int(response['size']), [])
         else:
             return ArtifactoryStat(stat.S_IFDIR, 0, response['children'])
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        if buffering != -1:
+            raise UnsupportedOperation(f'Unsupported buffering: {buffering!r}')
+        uri = f'{self.base_uri}{self}'
+        action = ''.join(c for c in mode if c not in 'btU')
+        if action == 'r':
+            response = self.session.get(uri, stream=True)
+            if response.status_code == 404:
+                raise OSError(errno.ENOENT, "File not found", str(self))
+            response.raise_for_status()
+            fileobj = response.raw
+        else:
+            # FIXME: support 'w' mode.
+            raise UnsupportedOperation(f'Unsupported mode: {mode!r}')
+        if 'b' not in mode:
+            fileobj = io.TextIOWrapper(fileobj, encoding, errors, newline)
+        return fileobj
 
     def iterdir(self):
         st = self.stat()
