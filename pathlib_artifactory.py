@@ -2,6 +2,7 @@ import dataclasses
 import errno
 import posixpath
 import stat
+from urllib.parse import urlparse
 
 from requests import Session
 from pathlib_abc import PathBase
@@ -18,7 +19,7 @@ class ArtifactoryPath(PathBase):
     parser = posixpath
 
     def __init__(self, *pathsegments, base_uri, session=None):
-        super().__init__('/', *pathsegments)
+        super().__init__(*pathsegments)
         self.base_uri = base_uri
         self.session = session or Session()
 
@@ -58,5 +59,5 @@ class ArtifactoryPath(PathBase):
 
     @classmethod
     def from_uri(cls, uri):
-        head, mid, tail = uri.partition('/artifactory/')
-        return cls(tail, base_uri=head + mid)
+        head, tail = uri.split('/artifactory/', 1)
+        return cls(f'/{tail}', base_uri=f'{head}/artifactory')
