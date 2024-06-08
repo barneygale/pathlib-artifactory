@@ -53,6 +53,20 @@ class ArtifactoryPath(PathBase):
         for child in st.st_children:
             yield self.joinpath(child['uri'][1:])
 
+    def absolute(self):
+        if self.is_absolute():
+            return self
+        return self.with_segments(f'/{self}')
+
+    # FIXME: touch
+    # FIXME: mkdir
+    # FIXME: rename
+    # FIXME: replace
+    # FIXME: unlink
+    # FIXME: rmdir
+    # FIXME: owner
+    # FIXME: group
+
     def as_uri(self):
         return self.base_uri + str(self)
 
