@@ -62,10 +62,11 @@ class ArtifactoryPath(PathBase):
         return type(self)(*pathsegments, base_uri=self.base_uri, session=self.session)
 
     def stat(self, *, follow_symlinks=True):
-        uri = f'{self.base_uri}/api/storage{self}'
+        path = str(self.absolute())
+        uri = f'{self.base_uri}/api/storage{path}'
         response = self.session.get(uri)
         if response.status_code == 404:
-            raise OSError(errno.ENOENT, 'File not found', str(self))
+            raise OSError(errno.ENOENT, 'File not found', path)
         response.raise_for_status()
         data = response.json()
         if 'size' in data:
@@ -95,8 +96,7 @@ class ArtifactoryPath(PathBase):
             st = self.stat()
             if isinstance(st, DirectoryStatus):
                 raise OSError(errno.EISDIR, 'Is a directory', str(self))
-            uri = f'{self.base_uri}{self}'
-            response = self.session.get(uri, stream=True)
+            response = self.session.get(self.as_uri(), stream=True)
             if response.status_code == 404:
                 raise OSError(errno.ENOENT, 'File not found', str(self))
             response.raise_for_status()
@@ -117,7 +117,7 @@ class ArtifactoryPath(PathBase):
     def absolute(self):
         if self.is_absolute():
             return self
-        return self.with_segments(f'/{self}')
+        raise UnsupportedOperation(f'Relative path: {self!r}')
 
     # FIXME: touch
     # FIXME: mkdir
@@ -129,7 +129,7 @@ class ArtifactoryPath(PathBase):
     # FIXME: group
 
     def as_uri(self):
-        return self.base_uri + str(self)
+        return self.base_uri + str(self.absolute())
 
     @classmethod
     def from_uri(cls, uri):
