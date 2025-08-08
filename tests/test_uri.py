@@ -1,10 +1,11 @@
+from pathlib_abc import vfspath
 from pathlib_artifactory import ArtifactoryPath
 
 def test_from_uri():
     def check(uri, pathstr):
         p = ArtifactoryPath.from_uri(uri)
         assert p.base_uri == 'http://artifactory:8080/artifactory'
-        assert str(p) == pathstr
+        assert vfspath(p) == pathstr
 
     check('http://artifactory:8080/artifactory/repo', '/repo')
     check('http://artifactory:8080/artifactory/repo/', '/repo/')
