@@ -1,28 +1,38 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
 name = "pathlib-artifactory"
-version = "0.3.0"
-authors = [
-  { name="Barney Gale", email="barney.gale@gmail.com" },
-]
 description = "Backport of pathlib ABCs"
 readme = "README.rst"
-license = {file = "LICENSE.txt"}
-requires-python = ">=3.7"
+authors = [
+    {name = "Barney Gale", email = "barney.gale@gmail.com"},
+]
+license = "GPL-3.0-or-later"
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+    "Intended Audience :: Developers",
     "Operating System :: OS Independent",
-    "Intended Audience :: Developers"
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
+requires-python = ">= 3.9"
 dependencies = [
-    "pathlib-abc==0.3.1",
+    "pathlib-abc ~= 0.5.1",
     "requests",
+    "requests-seekable ~= 0.1.0",
 ]
+dynamic = ["version"]
 
 [project.urls]
-Homepage = "https://github.com/barneygale/pathlib-artifactory"
-Issues = "https://github.com/barneygale/pathlib-artifactory/issues"
+"Source code" = "https://github.com/barneygale/pathlib-artifactory"
+"Issue tracker" = "https://github.com/barneygale/pathlib-artifactory/issues"
+
+[tool.setuptools.dynamic]
+version.attr = "pathlib_artifactory.__version__"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
