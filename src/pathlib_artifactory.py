@@ -31,7 +31,7 @@ class ArtifactoryPathInfo(PathInfo):
             data = response.json()
             self._exists = True
             self._is_dir = 'size' not in data
-            self._size = data.get('size', 0)
+            self._size = 0 if self._is_dir else int(data['size'])
             self._children = data.get('children', [])
 
     def exists(self, *, follow_symlinks=True):
