@@ -5,5 +5,4 @@ Contents
 
 .. toctree::
     api
-    changes
     license
