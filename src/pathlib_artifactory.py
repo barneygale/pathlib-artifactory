@@ -2,6 +2,8 @@ import contextlib
 import errno
 import posixpath
 
+from urllib.parse import quote, unquote
+
 from pathlib_abc import PathInfo, ReadablePath, vfspath
 from requests import Session
 from requests_seekable import SeekableResponse
@@ -107,7 +109,7 @@ class ArtifactoryPath(ReadablePath):
     @property
     def info(self):
         if self._info is None:
-            self._info = ArtifactoryPathInfo(f'{self.base_uri}/api/storage{vfspath(self)}')
+            self._info = ArtifactoryPathInfo(f'{self.base_uri}/api/storage{quote(vfspath(self))}')
         return self._info
 
     def exists(self, *, follow_symlinks=True):
@@ -139,9 +141,9 @@ class ArtifactoryPath(ReadablePath):
         raise OSError(errno.EINVAL, 'Not a symlink', self.as_uri())
 
     def as_uri(self):
-        return self.base_uri + vfspath(self)
+        return self.base_uri + quote(vfspath(self))
 
     @classmethod
     def from_uri(cls, uri):
         head, tail = uri.split('/artifactory/', 1)
-        return cls(f'/{tail}', base_uri=f'{head}/artifactory')
+        return cls(f'/{unquote(tail)}', base_uri=f'{head}/artifactory')
